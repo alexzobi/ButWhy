@@ -9,6 +9,7 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const dbStore = new SequelizeStore({db});
 const passport = require('passport');
+module.exports = app;
 
 if (process.env.NODE_ENV !== 'production') require('../secrets');
 
@@ -42,7 +43,7 @@ app.use(session({
   
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use('/auth', require('./auth'));
 app.use('/api', require('./api'));
 
 app.use(express.static(path.join(__dirname, '..', 'public')));

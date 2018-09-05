@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../db/models');
+module.exports = router;
 
 router.get('/login', ((req, res, next)=>{
   req.body.delete('isAdmin');
@@ -12,7 +13,7 @@ router.get('/login', ((req, res, next)=>{
       }
     })
     .catch(next);
-})
+}))
 
 router.post('/signup', (req, res, next)=>{
   req.body.delete('isAdmin');
@@ -21,16 +22,25 @@ router.post('/signup', (req, res, next)=>{
     userName: req.body.userName,
     profilePic: req.body.profilePic
   }})
-    .spread((user, created)=>{
+    .spread((user, created)=>{ 
       if(created){
         console.log('ONE OF US. ONE OF US. ONE OF US.')
       } else {
         if(user.password === req.body.password){
           console.log(`You're already in the system, homie!`);
         } else {
-          console.log('That email is already associated with an account.')
+          console.log('That email is associated with an existing account. Re-enter password.')
         }
       }
     })
-
 })
+
+router.get('/me', (req, res, next) => {
+  res.json(req.user);
+});
+
+router.delete('/logout', (req, res, next) => {
+  req.logout();
+  req.session.destroy()
+  res.sendStatus(204);
+});
